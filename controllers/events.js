@@ -39,6 +39,9 @@ function voteCreateRoute(req,res,next){
   req.body.voter = req.currentUser;
   Event.findById(req.params.id)
     .then(event => {
+      event.votes = event.votes.filter(vote => {
+        vote.voter !== req.currentUser;
+      });
       event.votes.push(req.body);
       return event.save();
     })

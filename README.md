@@ -13,6 +13,7 @@ After fleshing out some feature ideas to make sure the idea had enough scope to 
 <img width="1268" alt="trello" src="https://user-images.githubusercontent.com/31917459/37826214-81616650-2e8a-11e8-8e4f-5c708a544dee.png">
 
 ## Design Phase
+
 We started out by drawing some simple wireframes for our RESTful routes for each resource. This also highlighted some feature ideas we had not previously thought about.
 
 We added these wireframes to our Trello Board so that we would both have easy access to all of our planning materials. Below are some examples:

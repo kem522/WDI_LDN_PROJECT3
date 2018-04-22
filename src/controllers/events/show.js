@@ -1,6 +1,6 @@
-EventsShowCtrl.$inject = ['$http', 'Event', '$state', 'User', '$auth'];
+EventsShowCtrl.$inject = ['$http', 'Event', '$state', 'User', '$auth', '$scope'];
 
-function EventsShowCtrl($http, Event, $state, User, $auth){
+function EventsShowCtrl($http, Event, $state, User, $auth, $scope){
   const vm = this;
   vm.event = {};
   vm.users = [];
@@ -97,37 +97,21 @@ function EventsShowCtrl($http, Event, $state, User, $auth){
   }
 
   function vote(restaurant) {
-    //delete user's previous votes
-    if (vm.event.votes.filter(obj => obj.voter._id === currentUser).length > 0) {
-      const vote = vm.event.votes.filter(obj => obj.voter._id === currentUser);
-      vote.forEach(vote => {
-        vm.talliedVotes[vote.restaurant.id] -= 1;
-        Event
-          .voteDelete($state.params.id, vote)
-          .then(() => {
-            //add a vote
-            Event.voteCreate($state.params.id, { restaurant: restaurant })
-              .then(res => {
-                vm.event = res.data;
-              })
-              .catch(err => console.error(err));
-          });
-      });
-    } else {
-    // else just add a vote
-      Event
-        .voteCreate($state.params.id, { restaurant: restaurant })
-        .then(res => {
-          vm.event = res.data;
-        })
-        .catch(err => console.error(err));
-    }
-    if (vm.talliedVotes[restaurant.id]) vm.talliedVotes[restaurant.id] += 1;
-    else vm.talliedVotes[restaurant.id] = 1;
+    //moved functionality to delete user's previous votes to backend controller
+    Event.voteCreate($state.params.id, { restaurant: restaurant })
+      .then(res => vm.event = res.data)
+      .then(() => {
+        vm.event.votes.forEach(vote => {
+          vm.talliedVotes = {};
+          if (vm.talliedVotes[vote.restaurant.id]) vm.talliedVotes[vote.restaurant.id] += 1;
+          else vm.talliedVotes[vote.restaurant.id] = 1;
+        });
+      })
+      .catch(err => console.error(err));
   }
 
   function votedFor(restaurant){
-    return (vm.event.votes.findIndex(vote => vote.voter._id === currentUser && vote.restaurant.id === restaurant.id) === -1);
+    return (vm.event.votes.findIndex(vote => vote.voter === currentUser && vote.restaurant.id === restaurant.id) === -1);
   }
 
 
